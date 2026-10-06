@@ -1126,7 +1126,8 @@ public class NvoEmpaqueFragment extends Fragment {
                     .build();
 
             // Encolar
-            WorkManager.getInstance(getContext()).enqueue(uploadRequest);
+            if(getContext()!=null)
+                WorkManager.getInstance(getContext()).enqueue(uploadRequest);
         }
 
 

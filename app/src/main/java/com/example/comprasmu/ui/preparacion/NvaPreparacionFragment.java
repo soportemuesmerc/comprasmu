@@ -19,6 +19,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import android.os.Environment;
 import android.os.SystemClock;
@@ -51,6 +57,7 @@ import com.example.comprasmu.data.modelos.ListaCompra;
 import com.example.comprasmu.data.modelos.Reactivo;
 import com.example.comprasmu.data.remote.InformeEtapaEnv;
 import com.example.comprasmu.services.SubirFotoService;
+import com.example.comprasmu.services.UploadFotoWorker;
 import com.example.comprasmu.ui.RevisarFotoActivity;
 import com.example.comprasmu.ui.infetapa.NuevoInfEtapaActivity;
 import com.example.comprasmu.ui.infetapa.NuevoInfEtapaViewModel;
@@ -67,6 +74,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.example.comprasmu.utils.micamara.MiCamaraActivity;
 import static android.app.Activity.RESULT_OK;
 
@@ -908,14 +917,14 @@ public class NvaPreparacionFragment extends Fragment {
         return envio;
     }
 
-    public static void subirFotos(Activity activity, InformeEtapaEnv informe){
+    public  void subirFotos(Activity activity, InformeEtapaEnv informe){
         //las imagenes
         if(informe.getInformeEtapa().getEtapa()==1){
             //busco la imagenes
             for(ImagenDetalle imagen:informe.getImagenDetalles()){
                 //
                 //subo cada una
-                Intent msgIntent = new Intent(activity, SubirFotoService.class);
+               /* Intent msgIntent = new Intent(activity, SubirFotoService.class);
                 msgIntent.putExtra(SubirFotoService.EXTRA_IMAGE_ID, imagen.getId());
                 msgIntent.putExtra(SubirFotoService.EXTRA_IMG_PATH,imagen.getRuta());
                 msgIntent.putExtra(SubirFotoService.EXTRA_INDICE,informe.getIndice());
@@ -926,10 +935,31 @@ public class NvaPreparacionFragment extends Fragment {
 
                 //cambio su estatus a subiendo
                 imagen.setEstatusSync(1);
-                activity.startService(msgIntent);
-                //cambio su estatus a subiendo
+                activity.startService(msgIntent);*/
 
+                //cambiar el fotoservice por un workmanager que gestiona todo
 
+                Constraints restricciones = new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
+
+                // Pasar los IDs necesarios
+                Data inputData = new Data.Builder()
+                        .putInt(UploadFotoWorker.EXTRA_IMAGE_ID, imagen.getId())
+                        .putString(UploadFotoWorker.EXTRA_IMG_PATH,imagen.getRuta())
+                        .putString(UploadFotoWorker.EXTRA_INDICE,informe.getIndice())
+                        .build();
+
+                // Crear la petición
+                OneTimeWorkRequest uploadRequest = new OneTimeWorkRequest.Builder(UploadFotoWorker.class)
+                        .setConstraints(restricciones)
+                        .setInputData(inputData)
+                        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS) // Reintentos inteligentes
+                        .build();
+
+                // Encolar
+                if(getContext()!=null)
+                 WorkManager.getInstance(getContext()).enqueue(uploadRequest);
 
             }
 
