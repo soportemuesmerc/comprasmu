@@ -402,7 +402,7 @@
     <string name="para_tomarfoto">Para guardar la foto o la ubicación acérquese a la tienda seleccionada</string>
     <string name="usted_noseenc">USTED NO SE ENCUENTRA EN EL PUNTO DONDE ABRIO SU INFORME, VERIFIQUE PARA TOMAR LA FOTO</string>
     <string name="seleccione_causa">SELECCIONE LA CAUSA</string>
-    <string name="version_app">1.0.72</string>
+    <string name="version_app">1.0.73</string>
     <string name="recorrido">RECORRIDO</string>
 
 </resources>
