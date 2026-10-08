@@ -195,6 +195,7 @@ GoogleMap.OnInfoWindowClickListener,
         mensajetienda.setVisibility(View.GONE);
         btnverfil=findViewById(R.id.btnmfiltros);
         btnvatienda.setEnabled(false);
+        viendoRecorrido=false;
         BuscadorTiendas buscador=new BuscadorTiendas();
         // Log.d(TAG,"res "+buscador.dentroDelCirculo(16.7648672,-93.0821975,16.764111,-93.081486));
         btnverfil.setOnClickListener(new View.OnClickListener() {
@@ -259,6 +260,7 @@ GoogleMap.OnInfoWindowClickListener,
             public void onClick(View view) {
                 DescripcionGenerica plantasel=(DescripcionGenerica)spplantas.getSelectedItem();
                 viendoRecorrido=false;
+                btnvatienda.setEnabled(true);
                 botonRecorrido.setSelected(false);
                 if(plantasel!=null) {
                     plantaId = plantasel.id;
@@ -274,6 +276,7 @@ GoogleMap.OnInfoWindowClickListener,
         btnvatienda.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(mensajetienda.getVisibility()==View.GONE)
                     if(!viendoRecorrido) //desde el recorrido ya no se puede hacer una nueva tienda es solo consulta
                         nuevaTienda();
@@ -285,6 +288,7 @@ GoogleMap.OnInfoWindowClickListener,
             public void onClick(View view) {
                 DescripcionGenerica plantasel=(DescripcionGenerica)spplantas.getSelectedItem();
                 viendoRecorrido=true;
+                btnvatienda.setEnabled(false);
                 botonRecorrido.setSelected(true);
                 if(plantasel!=null) {
                     plantaId = plantasel.id;
@@ -872,7 +876,9 @@ GoogleMap.OnInfoWindowClickListener,
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(japon2,10));
         else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 4));
-        btnvatienda.setEnabled(true);
+        Log.e(TAG, "viendoRecorrido" + viendoRecorrido);
+        if(!viendoRecorrido)
+            btnvatienda.setEnabled(true);
     }
 
     public String validarColorTienda(int estatus){
@@ -1135,7 +1141,7 @@ GoogleMap.OnInfoWindowClickListener,
 
     @Override
     public void todoBien(RespInfEtapaResponse maininfoetaResp, RespInformesResponse maininfoResp, List<Correccion> mainRespcor) {
-        if(this!=null) {
+        if(this!=null&&Constantes.INDICEACTUAL!=null) {
 
 
             String ffin= "";
@@ -1153,6 +1159,8 @@ GoogleMap.OnInfoWindowClickListener,
                 }
             });
         }
+        else
+            if(alert!=null ) alert.closeAlertDialog();
     }
 
     @Override
@@ -1436,7 +1444,8 @@ GoogleMap.OnInfoWindowClickListener,
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(japon2,10));
         else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 4));
-        btnvatienda.setEnabled(true);
+        if(!viendoRecorrido)
+            btnvatienda.setEnabled(true);
     }
 
     public boolean calcularTotales(List<ListaCompraDetalle> detalles)
