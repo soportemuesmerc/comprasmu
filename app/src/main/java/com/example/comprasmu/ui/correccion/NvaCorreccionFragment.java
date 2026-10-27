@@ -27,6 +27,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.example.comprasmu.NavigationDrawerActivity;
 import com.example.comprasmu.R;
 
@@ -40,6 +47,7 @@ import com.example.comprasmu.data.remote.CorreccionEnvio;
 
 import com.example.comprasmu.services.DescAutomaticasServiceManager;
 import com.example.comprasmu.services.SubirFotoService;
+import com.example.comprasmu.services.UploadFotoWorker;
 import com.example.comprasmu.ui.RevisarFotoActivity;
 import com.example.comprasmu.ui.infetapa.NuevoInfEtapaActivity;
 import com.example.comprasmu.ui.solcorreccion.ListaSolsViewModel;
@@ -55,6 +63,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -756,10 +765,10 @@ public class NvaCorreccionFragment extends Fragment {
 
 
 
-    public static void subirFotos(Activity activity, int id, String ruta){
+    public void subirFotos(Activity activity, int id, String ruta){
 
         //subo cada una
-        Intent msgIntent = new Intent(activity, SubirFotoService.class);
+        /*Intent msgIntent = new Intent(activity, SubirFotoService.class);
         msgIntent.putExtra(SubirFotoService.EXTRA_IMAGE_ID,id);
         msgIntent.putExtra(SubirFotoService.EXTRA_IMG_PATH,ruta);
 
@@ -769,7 +778,31 @@ public class NvaCorreccionFragment extends Fragment {
 
         msgIntent.setAction(SubirFotoService.ACTION_UPLOAD_COR);
 
-        activity.startService(msgIntent);
+        activity.startService(msgIntent);*/
+
+        //cambiar el fotoservice por un workmanager que gestiona todo
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        // Pasar los IDs necesarios
+        Data inputData = new Data.Builder()
+                .putInt(UploadFotoWorker.EXTRA_IMAGE_ID, id)
+                .putString(UploadFotoWorker.EXTRA_IMG_PATH, ruta)
+                .putString(UploadFotoWorker.EXTRA_INDICE,Constantes.INDICEACTUAL)
+                .build();
+
+        // Crear la petición
+        OneTimeWorkRequest uploadRequest = new OneTimeWorkRequest.Builder(UploadFotoWorker.class)
+                .setConstraints(restricciones)
+                .setInputData(inputData)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 60, TimeUnit.SECONDS) // Reintentos inteligentes
+                .build();
+
+        // Encolar
+        if(getContext()!=null)
+            WorkManager.getInstance(getContext()).enqueue(uploadRequest);
 
 
     }
