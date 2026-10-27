@@ -158,7 +158,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text='@{detalle.nombreTipoMuestra}'
-                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.INVISIBLE:View.VISIBLE}" />
+                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.GONE:View.VISIBLE}" />
                         <TextView
                             android:id="@+id/txtldNota"
                             style="@style/textolistagris"
@@ -166,15 +166,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text='@{detalle.lid_nota}'
-                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.VISIBLE:View.INVISIBLE}" />
+                            android:visibility="@{isBu?View.GONE:detalle.tipoMuestra==2?View.VISIBLE:View.GONE}" />
                         <TextView
                             android:id="@+id/txtldQrPermitido"
                             style="@style/textolistagris"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text='@{detalle.lid_qrpermtido}'
-                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.VISIBLE:View.INVISIBLE}" />
+                            android:text='@{detalle.lid_qrpermitido}'
+                            android:visibility="@{isBu?View.GONE:detalle.tipoMuestra==2?View.VISIBLE:View.GONE}" />
                         <TextView
                             android:id="@+id/txtldisbu3"
                             android:layout_width="59dp"
