@@ -158,8 +158,23 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text='@{detalle.nombreTipoMuestra}'
-                            android:visibility="@{isBu?View.INVISIBLE:View.VISIBLE}" />
-
+                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.INVISIBLE:View.VISIBLE}" />
+                        <TextView
+                            android:id="@+id/txtldNota"
+                            style="@style/textolistagris"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text='@{detalle.lid_nota}'
+                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.VISIBLE:View.INVISIBLE}" />
+                        <TextView
+                            android:id="@+id/txtldQrPermitido"
+                            style="@style/textolistagris"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text='@{detalle.lid_qrpermtido}'
+                            android:visibility="@{isBu?View.INVISIBLE:detalle.tipoMuestra==2?View.VISIBLE:View.INVISIBLE}" />
                         <TextView
                             android:id="@+id/txtldisbu3"
                             android:layout_width="59dp"

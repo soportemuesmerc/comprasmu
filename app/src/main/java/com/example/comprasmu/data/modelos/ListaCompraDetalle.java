@@ -41,10 +41,18 @@ public class ListaCompraDetalle {
     protected int lid_backup;
     @ColumnInfo(defaultValue = "0")
     protected int lid_numtienbak;
+    protected String lid_qrpermitido;
+    protected String lid_nota;
+
     public ListaCompraDetalle(){
 
     }
-    public void iniciarListaCompraDetalle(int id, int listaId, int productosId, String productoNombre, String tamanio, int tamanioId, String empaque, int empaquesId, String tipoAnalisis, int analisisId, int cantidad, String codigosNoPermitidos, String nvoCodigo, int estatus, int comprados, int tipoMuestra, String nombreTipoMuestra, int categoriaid, String categoria, String lid_fechapermitida, String lid_fecharestringida, int lid_orden, int lid_backup) {
+    public void iniciarListaCompraDetalle(int id, int listaId, int productosId, String productoNombre, String tamanio, int tamanioId, String empaque,
+                                          int empaquesId, String tipoAnalisis, int analisisId, int cantidad,
+                                          String codigosNoPermitidos, String nvoCodigo, int estatus,
+                                          int comprados, int tipoMuestra, String nombreTipoMuestra,
+                                          int categoriaid, String categoria, String lid_fechapermitida,
+                                          String lid_fecharestringida, int lid_orden, int lid_backup, String lid_nota) {
         this.id = id;
         this.listaId = listaId;
         this.productosId = productosId;
@@ -68,6 +76,7 @@ public class ListaCompraDetalle {
         this.lid_fecharestringida = lid_fecharestringida;
         this.lid_orden = lid_orden;
         this.lid_backup = lid_backup;
+        this.lid_nota=lid_nota;
     }
 
     public int getId() {
@@ -296,5 +305,21 @@ public class ListaCompraDetalle {
 
     public void setLid_numtienbak(int lid_numtienbak) {
         this.lid_numtienbak = lid_numtienbak;
+    }
+
+    public String getLid_nota() {
+        return lid_nota;
+    }
+
+    public void setLid_nota(String lid_nota) {
+        this.lid_nota = lid_nota;
+    }
+
+    public String getLid_qrpermitido() {
+        return lid_qrpermitido;
+    }
+
+    public void setLid_qrpermitido(String lid_qrpermitido) {
+        this.lid_qrpermitido = lid_qrpermitido;
     }
 }
