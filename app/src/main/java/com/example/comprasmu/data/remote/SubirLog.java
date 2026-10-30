@@ -4,16 +4,18 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import com.example.comprasmu.BaseApplication;
 import com.example.comprasmu.data.repositories.ImagenDetRepositoryImpl;
 import com.example.comprasmu.services.SubirLogService;
 import com.example.comprasmu.utils.Constantes;
+import net.gotev.uploadservice.data.UploadNotificationStatusConfig;
+import net.gotev.uploadservice.data.UploadNotificationConfig;
+import net.gotev.uploadservice.network.ServerResponse;
+import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest;
 
-import net.gotev.uploadservice.MultipartUploadRequest;
-import net.gotev.uploadservice.ServerResponse;
-import net.gotev.uploadservice.UploadInfo;
-import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 
 public class SubirLog {
@@ -63,10 +65,51 @@ public class SubirLog {
             }
                 upload= new MultipartUploadRequest(context, serverurl+URL_SUBIRPICTURE)
                     .setMaxRetries(2)
-                     .addParameter ("usuario", idusuario)
-                    .addParameter ("archivo", nombrearch)
-                      .setUtf8Charset();
-            upload.setDelegate(new UploadStatusDelegate(){
+                   // .setNotificationConfig(new UploadNotificationConfig())
+                        // Configuración de la notificación (opcional pero recomendada)
+                        .setNotificationConfig((context1, uploadId) -> {
+                            // Configuración para cuando está en PROGRESO
+                            UploadNotificationStatusConfig progress = new UploadNotificationStatusConfig(
+                                    "Subiendo archivo...", // Título
+                                    "Por favor espera"    // Mensaje
+
+                            );
+
+                            // Configuración para cuando tiene ÉXITO
+                            UploadNotificationStatusConfig success = new UploadNotificationStatusConfig(
+                                    "Muesmerc: Envío completado",
+                                    "El log se subió correctamente"
+
+                            );
+
+                            // Configuración para cuando hay ERROR
+                            UploadNotificationStatusConfig error = new UploadNotificationStatusConfig(
+                                    "Muesmerc: Error al enviar",
+                                    "No se pudo subir el log de errores"
+
+                            );
+
+                            // Configuración para cuando se CANCELA
+                            UploadNotificationStatusConfig cancelled = new UploadNotificationStatusConfig(
+                                    "Muesmerc: Envío cancelado",
+                                    "Se ha cancelado la subida"
+
+                            );
+
+                            return new UploadNotificationConfig(
+                                    BaseApplication.UPLOAD_CHANNEL_ID,
+                                    false, // isRingToneEnabled
+                                    progress,
+                                    success,
+                                    error,
+                                    cancelled
+                            );
+                        })
+
+                        .addParameter ("usuario", idusuario)
+                    .addParameter ("archivo", nombrearch);
+                     // .setUtf8Charset();
+          /*  upload.setDelegate(new UploadStatusDelegate(){
 
                 @Override
                 public void onProgress(UploadInfo uploadInfo) {
@@ -102,7 +145,7 @@ public class SubirLog {
                 }
 
 
-            });
+            });*/
 
 
 

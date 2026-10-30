@@ -706,7 +706,7 @@ GoogleMap.OnInfoWindowClickListener,
             ArrayList<DescripcionGenerica> plantasDisponibles;
             HashMap<Integer,Integer> totalPlantas=lcviewModel.getTotalPlantasxCliente(Constantes.CIUDADTRABAJO);
             for (Tienda tienda : listiendas) {
-                Log.d(TAG, tienda.getUne_id() + "--" + tienda.getUne_descripcion() + "--" + tienda.getEstpep() + "--" + tienda.getEstpen());
+              //  Log.d(TAG, tienda.getUne_id() + "--" + tienda.getUne_descripcion() + "--" + tienda.getEstpep() + "--" + tienda.getEstpen());
 
                 //busco los estatus por planta
                 estatusTienda = lcviewModel.buscarEstatusTienda(tienda.getUne_id(), tiendaEstatusClienteDao);

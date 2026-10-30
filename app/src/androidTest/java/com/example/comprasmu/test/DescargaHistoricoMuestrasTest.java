@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.arch.core.executor.TaskExecutor;
 import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
@@ -18,7 +18,7 @@ import com.example.comprasmu.data.modelos.HistoricoMuestras;
 import com.example.comprasmu.data.modelos.ImagenDetalle;
 import com.example.comprasmu.data.repositories.HistoricoMuestrasRepositoryImpl;
 import com.example.comprasmu.data.repositories.TablaVersionesRepImpl;
-
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,6 +48,7 @@ public class DescargaHistoricoMuestrasTest {
     @Test
     public void getMuestrasTest(){
         int plantaId=17;
+        final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
         PeticionesServidor peticionesServidor=new PeticionesServidor("12");
         //reviso si tengo algo en la tabla
         List<HistoricoMuestras> registros= repo.getByPlanta(plantaId);
@@ -59,9 +60,14 @@ public class DescargaHistoricoMuestrasTest {
                     //inserto en la tabla
                     if(historicoMuestras!=null)
                      Log.d("PRUEBAS","termine"+historicoMuestras.size());
-
+                    latch.countDown(); // Avisa que ya terminó
                 }
             });
+        }
+        try {
+            latch.await(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+           Log.e("Error",e.getMessage());
         }
         assertTrue(true);
     }

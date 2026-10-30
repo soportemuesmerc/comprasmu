@@ -18,7 +18,7 @@ import com.example.comprasmu.data.ComprasDataBase;
 import com.example.comprasmu.data.dao.ImagenDetalleDao;
 import com.example.comprasmu.data.modelos.ImagenDetalle;
 import com.example.comprasmu.data.remote.SubirFoto;
-import com.example.comprasmu.data.remote.SubirFotoAlt;
+//import com.example.comprasmu.data.remote.SubirFotoAlt;
 import com.example.comprasmu.data.repositories.CorreccionRepoImpl;
 import com.example.comprasmu.data.repositories.ImagenDetRepositoryImpl;
 import com.example.comprasmu.data.repositories.InfEtapaDetRepoImpl;

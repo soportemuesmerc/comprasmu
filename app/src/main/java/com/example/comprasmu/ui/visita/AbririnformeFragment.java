@@ -6,7 +6,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import com.example.comprasmu.data.ComprasDataBase;
 import com.example.comprasmu.ui.tiendas.LoadingAlert;
 import com.example.comprasmu.utils.micamara.MiCamaraActivity;
@@ -20,7 +19,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.os.Environment;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -41,7 +39,6 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -54,63 +51,48 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
-
-
 import com.example.comprasmu.R;
-
 import com.example.comprasmu.data.dao.ProductoExhibidoDao;
 import com.example.comprasmu.data.modelos.DescripcionGenerica;
 import com.example.comprasmu.data.modelos.Geocerca;
 import com.example.comprasmu.data.modelos.ImagenDetalle;
 import com.example.comprasmu.data.modelos.InformeCompra;
-
 import com.example.comprasmu.data.modelos.ListaCompra;
 import com.example.comprasmu.data.modelos.Tienda;
 import com.example.comprasmu.data.modelos.Visita;
-
 import com.example.comprasmu.data.repositories.GeocercaRepositoryImpl;
 import com.example.comprasmu.ui.RevisarFotoActivity;
 import com.example.comprasmu.ui.informe.FotoExhibicionAdapter;
 import com.example.comprasmu.ui.informe.NuevaFotoExhibViewModel;
 import com.example.comprasmu.ui.informe.NuevoinformeViewModel;
-
 import com.example.comprasmu.ui.listadetalle.ListaDetalleViewModel;
 import com.example.comprasmu.utils.CampoForm;
 import com.example.comprasmu.utils.ComprasLog;
 import com.example.comprasmu.utils.ComprasUtils;
 import com.example.comprasmu.utils.Constantes;
 import com.example.comprasmu.utils.CreadorFormulario;
-
 import com.example.comprasmu.utils.Preguntasino;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.PolyUtil;
-import com.mobsandgeeks.saripaar.ValidationError;
-import com.mobsandgeeks.saripaar.Validator;
-
 import java.io.File;
-
 import java.io.IOException;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.ACTIVITY_SERVICE;
 
-public class AbririnformeFragment extends Fragment implements Validator.ValidationListener, FotoExhibicionAdapter.AdapterCallback {
+public class AbririnformeFragment extends Fragment implements  FotoExhibicionAdapter.AdapterCallback {
 
     private static final int REQUEST_CHECK_SETTINGS = 0;
     public static final String IMG_PATH = "comprasmu.abririnf.img_path1";
@@ -2077,25 +2059,7 @@ public class AbririnformeFragment extends Fragment implements Validator.Validati
     }
 
 
-    @Override
-    public void onValidationSucceeded() {
-        guardar();
-    }
 
-    @Override
-    public void onValidationFailed(List<ValidationError> errors) {
-        for (ValidationError error : errors) {
-            View view = error.getView();
-            String message = error.getCollatedErrorMessage(getActivity());
-
-            // Display error messages ;)
-            if (view instanceof EditText) {
-                ((EditText) view).setError(message);
-            } else {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-            }
-        }
-    }
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         if (requestCode == 1000) {

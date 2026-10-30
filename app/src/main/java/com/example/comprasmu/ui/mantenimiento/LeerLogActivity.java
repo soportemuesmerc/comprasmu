@@ -107,7 +107,7 @@ public class LeerLogActivity extends AppCompatActivity {
      */
     public void respaldarBd(){
        // String actualtDBPath=getDatabasePath("compras_data.db").getAbsolutePath();
-        String actualtDBPath="data/data/com.example.comprasmu/databases/"+"compras_data";
+        String actualtDBPath=getDatabasePath("compras_data").getAbsolutePath();
 
         Intent msgIntent = new Intent(this, SubirLogService.class);
       //  msgIntent.putExtra(SubirLogService.EXTRA_LOG_PATH, "compraslog.txt");
