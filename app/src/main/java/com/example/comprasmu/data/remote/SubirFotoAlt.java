@@ -13,14 +13,14 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import net.gotev.uploadservice.MultipartUploadRequest;
+/*import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadStatusDelegate;
-
+*/
 /****original subir foto con multipart***/
 public class SubirFotoAlt {
-    MultipartUploadRequest upload;
+  /*  MultipartUploadRequest upload;
     String URL_SUBIRPICTURE="https://muesmerc.mx/comprasv1/api/public/subirfoto";
     private final ArrayList<SubirFotoService.SubirFotoListener> observadores = new ArrayList<SubirFotoService.SubirFotoListener>();
     ImagenDetRepositoryImpl idrepo;
@@ -68,7 +68,7 @@ public class SubirFotoAlt {
         for (SubirFotoService.SubirFotoListener obj : observadores) {
             obj.onProgress(progress);
         }
-    }
+    }*/
 
 
 //    public void subirFoto(List<String> uploadFileArrayList,String idusuario, Context context){
@@ -123,7 +123,7 @@ public class SubirFotoAlt {
 //
 //    }
 
-    public void subirFoto( String idusuario,String dir, ImagenDetalle imagen,String indice,  Context context, ImagenDetRepositoryImpl idrepo) throws Exception {
+  /*  public void subirFoto( String idusuario,String dir, ImagenDetalle imagen,String indice,  Context context, ImagenDetRepositoryImpl idrepo) throws Exception {
 
 //filenameGaleria=getFilename();
 
@@ -271,7 +271,7 @@ public class SubirFotoAlt {
         } catch (FileNotFoundException e) {
             throw new Exception("No se encontró el archivo "+uf+" Verifique");
         }
-    }
+    }*/
 
 
 }
