@@ -264,6 +264,19 @@ public class ListaSolsViewModel extends AndroidViewModel {
 
 
     }
+
+    public void procesarCanceladasEtaDet(MuestraCancelada cancelada) {
+        etadetRepo=new InfEtapaDetRepoImpl(this.context);
+        List<InformeEtapaDet> detalles = etadetRepo.getAllSencillo(cancelada.getInf_id());
+
+        if (detalles != null) {
+            for (InformeEtapaDet det:
+                    detalles) {
+                Log.e(TAG, "cancele etiquetado det:" + det.getId());
+                etadetRepo.actEstatus(det.getId(), 0);
+            }
+        }
+    }
     public void contarCanceladas(){
         int itotCanceleta=0;
         //busco si hay cancelacion de preparacion

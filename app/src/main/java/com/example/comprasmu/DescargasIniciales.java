@@ -61,6 +61,7 @@ public class DescargasIniciales {
         GeocercaRepositoryImpl georep;
         SolicitudCorRepoImpl solRepo;
         InfEtapaRepositoryImpl  infetarepo;
+        InfEtapaDetRepoImpl infEtapaDetRepo;
         VisitaRepositoryImpl visRepo;
         InformeCompraRepositoryImpl infrepo;
         Context act;
@@ -353,142 +354,146 @@ public class DescargasIniciales {
 
 
     public class DescargaIniListener implements  IDescargaIniListener, IActualListener, IListenerRevRec, DescRespInformesEta.ProgresoRespIEListener {
-    public DescargaIniListener(){
+        public DescargaIniListener(){
 
 
-    }
-    public void finalizar(){
-        Log.d(TAG,"finalizo descarga"+procesos+"--"+procesos_lev);
+        }
+        public void finalizar(){
+            Log.d(TAG,"finalizo descarga"+procesos+"--"+procesos_lev);
 
-    }
-
-
-    public void insertarZonas(List<Geocerca> zonas){
-        Log.d(TAG,"fin zonas ");
-        if (zonas != null && zonas.size() > 0) {
-
-            //insertar
-
-            for(Geocerca geo:zonas) {
-                georep.insert(geo);
-            }
-            //actualizo tabla versiones
-            TablaVersiones tv=new TablaVersiones();
-            tv.setNombreTabla("geocercas");
-            tv.setTipo("C");
-            tv.setVersion(new Date());
-            tvRepo.insertUpdate(tv);
-
-            tv=null;
         }
 
-        finalizar();
-    }
+
+        public void insertarZonas(List<Geocerca> zonas){
+            Log.d(TAG,"fin zonas ");
+            if (zonas != null && zonas.size() > 0) {
+
+                //insertar
+
+                for(Geocerca geo:zonas) {
+                    georep.insert(geo);
+                }
+                //actualizo tabla versiones
+                TablaVersiones tv=new TablaVersiones();
+                tv.setNombreTabla("geocercas");
+                tv.setTipo("C");
+                tv.setVersion(new Date());
+                tvRepo.insertUpdate(tv);
+
+                tv=null;
+            }
+
+            finalizar();
+        }
 
 
-    public void actualizar(ListaCompraResponse compraResp) {
-        infdrepo = new InformeComDetRepositoryImpl(act);
-       DescargasListaCompraImpl descargasListaCompra=new DescargasListaCompraImpl(flog);
-       descargasListaCompra.actualizarListaCompra(compraResp,lcrepo,lcdrepo,tvRepo,infdrepo);
-       finalizar();
+        public void actualizar(ListaCompraResponse compraResp) {
+            infdrepo = new InformeComDetRepositoryImpl(act);
+           DescargasListaCompraImpl descargasListaCompra=new DescargasListaCompraImpl(flog);
+           descargasListaCompra.actualizarListaCompra(compraResp,lcrepo,lcdrepo,tvRepo,infdrepo);
+           finalizar();
 
-    }
-    public int actualizarCorre(SolCorreResponse corrResp, int etapa) {
+        }
+        public int actualizarCorre(SolCorreResponse corrResp, int etapa) {
 
-        //primero los inserts
-        if (corrResp != null) {
+            //primero los inserts
+            if (corrResp != null) {
 
-            if (corrResp != null && corrResp.getInserts() != null) {
-                for (SolicitudCor sol : corrResp.getInserts()) {
-                    //veo si ya existe
-                  //   Log.d(TAG,"solcorreccion"+sol.getId()+"--"+ sol.getNumFoto());
-                    SolicitudCor solt = solRepo.findsimple(sol.getId(), sol.getNumFoto());
-                    if (solt != null) {
-                        if (solt.getEstatus() !=4||solt.getEstatus()!=5) {
-                            //actualizo
-                           // Log.d(TAG,"actualizo solcorreccion"+solt.getId()+"--"+ solt.getEstatus());
-                            solRepo.actualizarEst(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getEstatus(), sol.getId(), sol.getNumFoto());
-                        } else if (sol.getContador() > 1)
-                            solRepo.actualizarEst(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getEstatus(), sol.getId(), sol.getNumFoto());
-                        else
-                            solRepo.actualizar(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getId(), sol.getNumFoto());
+                if (corrResp != null && corrResp.getInserts() != null) {
+                    for (SolicitudCor sol : corrResp.getInserts()) {
+                        //veo si ya existe
+                      //   Log.d(TAG,"solcorreccion"+sol.getId()+"--"+ sol.getNumFoto());
+                        SolicitudCor solt = solRepo.findsimple(sol.getId(), sol.getNumFoto());
+                        if (solt != null) {
+                            if (solt.getEstatus() !=4||solt.getEstatus()!=5) {
+                                //actualizo
+                               // Log.d(TAG,"actualizo solcorreccion"+solt.getId()+"--"+ solt.getEstatus());
+                                solRepo.actualizarEst(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getEstatus(), sol.getId(), sol.getNumFoto());
+                            } else if (sol.getContador() > 1)
+                                solRepo.actualizarEst(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getEstatus(), sol.getId(), sol.getNumFoto());
+                            else
+                                solRepo.actualizar(sol.getMotivo(), sol.getContador(), sol.getCreatedAt(), sol.getId(), sol.getNumFoto());
 
-                    } else
-                        solRepo.insert(sol);
+                        } else
+                            solRepo.insert(sol);
+
+                    }
+
 
                 }
 
+                //los updates
+                if (corrResp != null && corrResp.getUpdates() != null) {
 
-            }
+                    if (corrResp.getUpdates() != null)
+                        solRepo.insertAll(corrResp.getUpdates()); //inserto blblbl
+                }
 
-            //los updates
-            if (corrResp != null && corrResp.getUpdates() != null) {
+                //actualizar version en tabla
+                TablaVersiones tinfo = new TablaVersiones();
+                tinfo.setNombreTabla(Contrato.TBLSOLCORRECCIONES);
+                Date fecha1 = new Date();
 
-                if (corrResp.getUpdates() != null)
-                    solRepo.insertAll(corrResp.getUpdates()); //inserto blblbl
-            }
+                tinfo.setVersion(fecha1);
+                tinfo.setIndice(Constantes.INDICEACTUAL);
+                tinfo.setTipo("I");
 
-            //actualizar version en tabla
-            TablaVersiones tinfo = new TablaVersiones();
-            tinfo.setNombreTabla(Contrato.TBLSOLCORRECCIONES);
-            Date fecha1 = new Date();
+                tvRepo.insertUpdate(tinfo);
+                //  Log.d(TAG,"dddddd"+corrResp.getCanceladas().size());
+                //veo las muestras canceladas
+                if (corrResp.getCanceladas() != null)
 
-            tinfo.setVersion(fecha1);
-            tinfo.setIndice(Constantes.INDICEACTUAL);
-            tinfo.setTipo("I");
-
-            tvRepo.insertUpdate(tinfo);
-            //  Log.d(TAG,"dddddd"+corrResp.getCanceladas().size());
-            //veo las muestras canceladas
-            if (corrResp.getCanceladas() != null)
-
-                    for (MuestraCancelada cancel :
-                            corrResp.getCanceladas()) {
-                        //busco el informedetalle y actualizo el estatus
-                        if(cancel.getIne_etapa()>0&&cancel.getIne_etapa()!=2) {
+                        for (MuestraCancelada cancel :
+                                corrResp.getCanceladas()) {
                             //busco el informedetalle y actualizo el estatus
+                            if(cancel.getIne_etapa()>0&&cancel.getIne_etapa()!=2) {
+                                //busco el informedetalle y actualizo el estatus
 
-                            this.procesarCanceladasEta(cancel);
-                        }else {
-                            this.procesarCanceladas(cancel);
-                            //canceladas será 0
+                                this.procesarCanceladasEta(cancel);
+                                if(cancel.getIne_etapa()==3) //tambien cancelo los detalles
+                                    this.procesarCanceladasEtaDet(cancel);
+
+                            }else {
+                                this.procesarCanceladas(cancel);
+                                //canceladas será 0
+
+                            }
 
                         }
+                //muestras eliminada son las canceladas que no se reponen
+                if (corrResp.getEliminadas() != null)
+                    for (MuestraCancelada cancel :
+                            corrResp.getEliminadas()) {
+                        {
+                            this.procesarEliminadas(cancel);
+                            //canceladas será 0
+                        }
+                    }
 
-                    }
-            //muestras eliminada son las canceladas que no se reponen
-            if (corrResp.getEliminadas() != null)
-                for (MuestraCancelada cancel :
-                        corrResp.getEliminadas()) {
-                    {
-                        this.procesarEliminadas(cancel);
-                        //canceladas será 0
-                    }
-                }
+            }
+            return 1;
 
         }
-        return 1;
-
-    }
 
 
 
-    //el estatus viene como 2 pero en la app 0 es cancelado y 2 es finalizado
-    public void procesarCanceladasEta(MuestraCancelada cancelada) {
-        InformeEtapa det = infetarepo.findsimple(cancelada.getInf_id());
 
-        if (det != null) {
-            Log.e(TAG, "cancele");
-            det.setMotivoCancel(cancelada.getVas_observaciones());
-            det.setFechaCancel(cancelada.getVas_fecha());
-            det.setEstatus(0);
+        //el estatus viene como 2 pero en la app 0 es cancelado y 2 es finalizado
+        public void procesarCanceladasEta(MuestraCancelada cancelada) {
+            InformeEtapa det = infetarepo.findsimple(cancelada.getInf_id());
 
-            infetarepo.insert(det);
-            infetarepo.actualizarEstatus(det.getId(), 0);
+            if (det != null) {
+                Log.e(TAG, "cancele");
+                det.setMotivoCancel(cancelada.getVas_observaciones());
+                det.setFechaCancel(cancelada.getVas_fecha());
+                det.setEstatus(0);
+
+                infetarepo.insert(det);
+                infetarepo.actualizarEstatus(det.getId(), 0);
 
 
+            }
         }
-    }
 
         public void procesarCanceladas(MuestraCancelada cancelada){
             infdrepo=new InformeComDetRepositoryImpl(act);
@@ -529,89 +534,102 @@ public class DescargasIniciales {
                     }
                 }
 
-            }
-
-    }
-
-    public void procesarEliminadas(MuestraCancelada cancelada){
-        InformeCompraDetalle det=infdrepo.findsimple(cancelada.getInd_id());
-        if(det!=null) {
-
-            det.setMotivoCancel(cancelada.getVas_observaciones());
-            det.setFechaCancel(cancelada.getVas_fecha());
-            det.setEstatus(6);
-            infdrepo.insert(det);
-            infdrepo.actualizarEstatus(det.getId(), 6);
+                }
 
         }
-    }
 
-    @Override
-    public void actualizarInformes(RespInformesResponse infoResp) {
-        // Log.d(TAG, "actualizando bd informes");
-        //primero los inserts
-        if (infoResp != null) {
+        public void procesarEliminadas(MuestraCancelada cancelada){
+            InformeCompraDetalle det=infdrepo.findsimple(cancelada.getInd_id());
+            if(det!=null) {
 
-            if (infoResp.getVisita() != null) {
-                //reviso cada uno y las inserto
-                for (Visita vis : infoResp.getVisita()) {
-                    visRepo.insert(vis); //inserto blblbl
+                det.setMotivoCancel(cancelada.getVas_observaciones());
+                det.setFechaCancel(cancelada.getVas_fecha());
+                det.setEstatus(6);
+                infdrepo.insert(det);
+                infdrepo.actualizarEstatus(det.getId(), 6);
+
+            }
+        }
+
+        @Override
+        public void actualizarInformes(RespInformesResponse infoResp) {
+            // Log.d(TAG, "actualizando bd informes");
+            //primero los inserts
+            if (infoResp != null) {
+
+                if (infoResp.getVisita() != null) {
+                    //reviso cada uno y las inserto
+                    for (Visita vis : infoResp.getVisita()) {
+                        visRepo.insert(vis); //inserto blblbl
+                    }
+                }
+                if (infoResp.getInformeCompra() != null && infoResp.getInformeCompra().size() > 0) {
+                    //como puede que ya existan reviso primero e inserto unoxuno
+                    infrepo.insertAll(infoResp.getInformeCompra());
+                }
+                if (infoResp.getInformeCompraDetalles() != null && infoResp.getInformeCompraDetalles().size() > 0) {
+                    //como puede que ya existan reviso primero e inserto unoxuno
+                    infdrepo.insertAll(infoResp.getInformeCompraDetalles());
+                }
+
+            }
+            //actualizar version en tabla
+            TablaVersiones tinfo = new TablaVersiones();
+            tinfo.setNombreTabla(Contrato.TBLINFORMESCOMP);
+            Date fecha1 = new Date();
+            Log.d("DescargasAsyncTask", "insertando fecha version 1" + fecha1);
+
+            tinfo.setVersion(fecha1);
+            tinfo.setIndice(Constantes.INDICEACTUAL);
+            tinfo.setTipo("I");
+
+            tvRepo.insertUpdate(tinfo);
+
+        }
+
+
+        @Override
+        public void guardarEstatus(PostResponse response) {
+
+        }
+
+
+        @Override
+        public void guardarRes(PostResponse respuesta) {
+
+        }
+
+        @Override
+        public void guardarResNotif(NotificacionResponse response) {
+            Log.d(TAG,"actualizando notificaciones");
+            if(response!=null&&response.getData()!=null) {
+                convertirListaNotif(response.getData());
+
+            }
+            Log.d(TAG,"finalizando notificaciones voy en el"+procesos);
+            finalizar();
+        }
+
+        @Override
+        public void finalizarrespie() {
+
+            procesos++;
+
+            finalizar();
+
+        }
+
+        public void procesarCanceladasEtaDet(MuestraCancelada cancelada) {
+            infEtapaDetRepo=new InfEtapaDetRepoImpl(act);
+            List<InformeEtapaDet> detalles = infEtapaDetRepo.getAllSencillo(cancelada.getInf_id());
+
+            if (detalles != null) {
+                for (InformeEtapaDet det:
+                        detalles) {
+                    Log.e(TAG, "cancele etiquetado det:" + det.getId());
+                    infEtapaDetRepo.actEstatus(det.getId(), 0);
                 }
             }
-            if (infoResp.getInformeCompra() != null && infoResp.getInformeCompra().size() > 0) {
-                //como puede que ya existan reviso primero e inserto unoxuno
-                infrepo.insertAll(infoResp.getInformeCompra());
-            }
-            if (infoResp.getInformeCompraDetalles() != null && infoResp.getInformeCompraDetalles().size() > 0) {
-                //como puede que ya existan reviso primero e inserto unoxuno
-                infdrepo.insertAll(infoResp.getInformeCompraDetalles());
-            }
-
         }
-        //actualizar version en tabla
-        TablaVersiones tinfo = new TablaVersiones();
-        tinfo.setNombreTabla(Contrato.TBLINFORMESCOMP);
-        Date fecha1 = new Date();
-        Log.d("DescargasAsyncTask", "insertando fecha version 1" + fecha1);
-
-        tinfo.setVersion(fecha1);
-        tinfo.setIndice(Constantes.INDICEACTUAL);
-        tinfo.setTipo("I");
-
-        tvRepo.insertUpdate(tinfo);
-
-    }
-
-
-    @Override
-    public void guardarEstatus(PostResponse response) {
-
-    }
-
-
-    @Override
-    public void guardarRes(PostResponse respuesta) {
-
-    }
-
-    @Override
-    public void guardarResNotif(NotificacionResponse response) {
-        Log.d(TAG,"actualizando notificaciones");
-        if(response!=null&&response.getData()!=null) {
-            convertirListaNotif(response.getData());
-
-        }
-        Log.d(TAG,"finalizando notificaciones voy en el"+procesos);
-        finalizar();
-    }
-
-    @Override
-    public void finalizarrespie() {
-
-        procesos++;
-
-        finalizar();
-
-    }
 }
 }

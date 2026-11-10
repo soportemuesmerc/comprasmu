@@ -798,6 +798,8 @@ public class NavigationDrawerActivity extends AppCompatActivity implements Navig
                                 //busco el informedetalle y actualizo el estatus
 
                                 scViewModel.procesarCanceladasEta(cancel);
+                                if(cancel.getIne_etapa()==3) //tambien cancelo los detalles
+                                    scViewModel.procesarCanceladasEtaDet(cancel);
                             }else {
                                 scViewModel.procesarCanceladas(cancel);
                                //canceladas será 0
